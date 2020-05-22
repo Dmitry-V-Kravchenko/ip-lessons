@@ -1,0 +1,7 @@
+1. Сколько типов данных существует в JS?
+    Number, String, Boolean, Object, Symbol, BigInt, null, undefined - 8 типов данных
+2. Как вывести информацию в консоль?
+    let str = 'str';
+    console.log('str');
+3. Какая функция операторов || и &&?
+    Логическое ИЛИ(OR), логическое И(AND)
