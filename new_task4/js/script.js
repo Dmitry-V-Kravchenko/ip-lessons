@@ -29,7 +29,13 @@ const personalMovieDB = {
     writeYourGenres: function () {
         for (let i = 1; i < 4; i++) {
             this.genres[i-1] = prompt(`Ваш любимый жанр ${i}`, '');
+            while (this.genres[i-1] == null || this.genres[i-1] == '' || this.genres[i-1].trim() == '') {
+                this.genres[i-1] = prompt(`Ваш любимый жанр ${i}`, '');
+            }
         }
+        this.genres.forEach((item, i) => {
+            console.log(`Любимый жанр ${i} - это ${item}`);
+        });
     },
     showPersonStatus: function () {
         if (this.count < 10) {
@@ -54,6 +60,7 @@ const personalMovieDB = {
     toggleVisibleMyDB: function() {
         if (this.privat === false) {
             this.privat = true;
+            this.showMyDB();
         } else {
             this.privat = false;
         }
@@ -65,6 +72,7 @@ personalMovieDB.start();
 // personalMovieDB.writeYourGenres();
 // personalMovieDB.showPersonStatus();
 personalMovieDB.showMyDB();
+personalMovieDB.toggleVisibleMyDB();
 
 
-console.log(personalMovieDB);
+// console.log(personalMovieDB);
