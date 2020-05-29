@@ -39,7 +39,7 @@ let appData = {
     },
     chooseOptExpenses: function() {
         for(let i = 0; i < 3; i++) {
-            this.optionalExpenses[i+1] = prompt('Статья необязательных доходов?','');
+            this.optionalExpenses[i+1] = prompt('Статья необязательных расходов?','');
             if (this.optionalExpenses[i+1] == '' || 
                 this.optionalExpenses[i+1] == null ||
                 this.optionalExpenses[i+1].trim() == '') {
@@ -49,6 +49,12 @@ let appData = {
         for (let key in this.optionalExpenses) {
             console.log(`Способы доп. заработка: ${key}. ${this.optionalExpenses[key]} `);
         }
+    },
+    chooseIncome: function() {
+        this.income = prompt('Введите источники дополнительных доходов через запятую', '').split(', ');
+        this.income.push(prompt('Что-то еще?', ''));
+        this.income.sort();
+        console.log(this.income);
     },
     displayObj: function() {
         for (let key in this) {
@@ -61,6 +67,6 @@ appData.askQuestion();
 appData.detectLevel();
 // appData.chooseMainExpenses();
 // appData.chooseOptExpenses();
-appData.displayObj();
+// appData.displayObj();
 
 // console.log(appData);
