@@ -80,7 +80,7 @@ a:active {
     border-radius: 2.5px;
     background-color: #fff;
     box-shadow: 0 2.5px 10px 0 rgba(1, 0, 42, .1);
-    border: none;
+    border: 1px solid transparent;
     padding-left: 10px;
     margin-bottom: 10px;
     font-size: 14px;

@@ -33,18 +33,10 @@ let appData = {
             }
         }
     },
-    chooseOptExpenses: function() {        // !!!!! Переделать
-        for(let i = 0; i < 3; i++) {
-            this.optionalExpenses[i+1] = prompt('Статья необязательных расходов?','');
-            if (this.optionalExpenses[i+1] == '' || 
-                this.optionalExpenses[i+1] == null ||
-                this.optionalExpenses[i+1].trim() == '') {
-                    console.log('Некорректный ввод!');
-            }
-        }
-        for (let key in this.optionalExpenses) {
-            console.log(`Способы доп. заработка: ${key}. ${this.optionalExpenses[key]} `);
-        }
+    chooseOptExpenses: function(array) {
+        array.forEach((input, i) => {
+            this.optionalExpenses[i+1] = input;
+        });
     },
     chooseIncome: function() {
         this.income = prompt('Введите источники дополнительных доходов через запятую', '').split(', ');
@@ -77,14 +69,17 @@ const expBtn = document.querySelector('.expenses-item-btn'),
     startBtn = document.querySelector('#start');
 
 // info
-const expInfo = document.querySelector('.expenses-value');
+const expInfo = document.querySelector('.expenses-value'),
+      optExpInfo = document.querySelector('.optionalexpenses-value');
 
 expBtn.addEventListener('click', (event) => {
-    let expArray = [];
+    const expArray = [];
     const isEmpties = [];
+
     expItems.forEach((input, i) => {
         expArray[i] = input.value;
     });
+
     expArray.forEach((item, i) => {
         if (!appData.checkInput(item)) {
             expItems[i].style.border = '1px solid #c00';
@@ -96,13 +91,52 @@ expBtn.addEventListener('click', (event) => {
             isEmpties[i] = true;
         }
     });
+
     if (!isEmpties.some((item) => { return item === false; })) {
         appData.chooseMainExpenses(expArray);
-        expItems.forEach((input, i) => {
+        expItems.forEach((input) => {
             input.value = '';
         });
         const keys = Object.keys(appData.expenses);
         expInfo.textContent = `${keys[0]}, ${keys[1]}`;
     }
-    console.log(appData.expenses);
+    // console.log(appData.expenses);
+});
+
+optExpBtn.addEventListener('click', (event) => {
+    const optArray = [],
+          isEmpties = [];
+
+    let str = '';
+
+    optExpItems.forEach((input, i) => {
+        optArray[i] = input.value;
+    });
+
+    optArray.forEach((item, i) => {
+        if (!appData.checkInput(item)) {
+            optExpItems[i].style.border = '1px solid #c00';
+            event.target.textContent = 'Исправить';
+            isEmpties[i] = false;
+        } else {
+            optExpItems[i].style.border = 'none';
+            event.target.textContent = 'Утвердить';
+            isEmpties[i] = true;
+        }
+    });
+
+    if (!isEmpties.some((item) => { return item === false; })) {
+        appData.chooseOptExpenses(optArray);
+        optExpItems.forEach((input) => {
+            input.value = '';
+        });
+        for(let key in appData.optionalExpenses) {
+            str += ` ${key}. ${appData.optionalExpenses[key]}, `;
+        }
+    }
+    str = str.slice(0, -2);
+    str += '.';
+    optExpInfo.textContent = str;
+
+    // console.log(appData.optionalExpenses);
 });
