@@ -7,20 +7,17 @@ let appData = {
     optionalExpenses: {},
     income: [],
     savings: false,
+    savingSum: 0,
+    savingPercent: 0,
+    getMounthBudget: function() {
+        let money = prompt('Введите ежемесячную зарплату:', '');
+        while(!this.checkInput(money) || !isFinite(money)) {
+            money = prompt('Введите зарплату в числовом формате:', '');
+        }
+        this.money = money;
+    },
     detectDayBudget: function () {
         return (this.money / 30).toFixed(2);
-    },
-    detectLevel: function() {
-        const moneyPerDay = this.detectDayBudget();
-        if (moneyPerDay < 200) {
-            console.log('Очень низкий достаток');
-        } else if (moneyPerDay >= 200 && moneyPerDay <= 2000) {
-            console.log('Средний достаток');
-        } else if (moneyPerDay > 2000) {
-            console.log('Высокий достаток');
-        } else {
-            console.log('Произошла ошибка');
-        }
     },
     chooseMainExpenses: function(array) { 
         for (let i = 0; i < array.length; i++) {
@@ -38,11 +35,28 @@ let appData = {
             this.optionalExpenses[i+1] = input;
         });
     },
-    chooseIncome: function() {
-        this.income = prompt('Введите источники дополнительных доходов через запятую', '').split(', ');
-        this.income.push(prompt('Что-то еще?', ''));
+    chooseIncome: function(str) {
+        str = str.trim();
+        if (str[str.length - 1] === '.') {
+            str = str.slice(0, -1);
+        }
+        this.income = str.split(',');
+        this.income.forEach((item) =>{
+            item = item.trim();
+        });
         this.income.sort();
-        console.log(this.income);
+    },
+    detectLevel: function() {
+        const moneyPerDay = this.detectDayBudget();
+        if (moneyPerDay < 200) {
+            return 'Очень низкий достаток';
+        } else if (moneyPerDay >= 200 && moneyPerDay <= 2000) {
+            return 'Средний достаток';
+        } else if (moneyPerDay > 2000) {
+            return 'Высокий достаток';
+        } else {
+            return 'Произошла ошибка';
+        }
     },
     displayObj: function() {
         for (let key in this) {
@@ -56,11 +70,15 @@ let appData = {
     }
 };
 
+// ========== Выборки ============================================//
+
 // inputs
 const expItems = document.querySelectorAll('.expenses-item'),
     optExpItems = document.querySelectorAll('.optionalexpenses-item'),
-    chooseIncome = document.querySelector('choose-income'),
-    savingsFlag = document.querySelector('.savings');
+    chooseIncInput = document.querySelector('.choose-income'),
+    savingsFlag = document.querySelector('#savings'),
+    chooseItems = document.querySelectorAll('.choose-sum, .choose-percent'),
+    dateItems = document.querySelectorAll('.day-value, .month-value, .year-value');
 
 // buttons
 const expBtn = document.querySelector('.expenses-item-btn'),
@@ -70,7 +88,16 @@ const expBtn = document.querySelector('.expenses-item-btn'),
 
 // info
 const expInfo = document.querySelector('.expenses-value'),
-      optExpInfo = document.querySelector('.optionalexpenses-value');
+      optExpInfo = document.querySelector('.optionalexpenses-value'),
+      budget = document.querySelector('.budget-value'),
+      dayBudgetInfo = document.querySelector('.daybudget-value'),
+      dayBudgetLevelInfo = document.querySelector('.level-value'),
+      incomeInfo = document.querySelector('.income-value'),
+      monthSavingInfo = document.querySelector('.monthsavings-value'),
+      yearSavingInfo = document.querySelector('.yearsavings-value');
+      
+
+// =========== Обработчики =================================== //
 
 expBtn.addEventListener('click', (event) => {
     const expArray = [];
@@ -140,3 +167,67 @@ optExpBtn.addEventListener('click', (event) => {
 
     // console.log(appData.optionalExpenses);
 });
+
+countBudgetBtn.addEventListener('click', () => {
+    appData.getMounthBudget();
+    budget.innerHTML = appData.money + ' &#8381;';
+    dayBudgetInfo.innerHTML = appData.detectDayBudget() + ' &#8381;';
+    dayBudgetLevelInfo.textContent = appData.detectLevel();
+});
+
+chooseIncInput.addEventListener('blur', () => {
+    appData.chooseIncome(chooseIncInput.value);
+    incomeInfo.textContent = appData.income.join(', ') + '.';
+});
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    chooseItems.forEach((input) => {
+        input.setAttribute('disabled','');
+        input.style.backgroundColor = '#ddd';
+    });
+    
+    let date = new Date(),
+        dateArr = [];
+    appData.timeData = date.toLocaleDateString();
+    dateArr = appData.timeData.split('.');
+    dateArr.reverse();
+    dateItems.forEach((input, i) => {
+        input.value = dateArr[i];
+    });
+});
+
+savingsFlag.addEventListener('change', (event) => {
+    if (savingsFlag.checked) {
+        appData.savings = true;
+        chooseItems.forEach((input) => {
+            input.removeAttribute('disabled');
+            input.style.backgroundColor = '#fff';
+        });
+    } else {
+        chooseItems.forEach((input) => {
+            appData.savings = false;
+            input.value = '';
+            input.setAttribute('disabled','');
+            input.style.backgroundColor = '#ddd';
+        });        
+    }
+});
+
+startBtn.addEventListener('click', () => {
+    const savingArr = [];
+    if (appData.savings) {
+        chooseItems.forEach((input, i) => {
+            savingArr[i] = input.value;
+        });
+        for (let item of savingArr) {
+            if (!appData.checkInput(item) || !isFinite(item)) {
+                item = 0;
+            }
+        }
+        appData.savingSum = +savingArr[0];
+        appData.savingPercent = +savingArr[1];
+        yearSavingInfo.innerHTML = (appData.savingSum * appData.savingPercent / 100).toFixed(2) + ' &#8381;';
+        monthSavingInfo.innerHTML = (appData.savingSum * appData.savingPercent / 100 / 12).toFixed(2) + ' &#8381;';
+    }
+});
+
