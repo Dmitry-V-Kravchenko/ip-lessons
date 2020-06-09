@@ -43,7 +43,7 @@ const movieList = document.querySelector('.promo__interactive-list'),
     newFilmName = formAdd.querySelector('.adding__input'),
     likeFlag = formAdd.querySelector('input[type="checkbox"]'),
     addBtn = formAdd.querySelector('button'),
-    baskets = document.querySelector('.delete'); 
+    baskets = document.querySelector('.delete');
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -60,9 +60,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Добавляем любимый фильм');
             }
             formAdd.reset();
-        }   
+        }
     });
-    
+
     movieList.addEventListener('click', (event) => {
         if (event.target.classList.contains('delete')) {
             let point = 0,
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 newList = [];
             point = event.target.parentElement.textContent.indexOf('.');
             str = event.target.parentElement.textContent.slice(point + 2).trim();
-            
+
             newList = movieDB.movies.filter((film) => {
                 return str != film;
             });
@@ -80,4 +80,3 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-
